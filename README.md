@@ -1,4 +1,4 @@
-# machine-learning-map-reduce
+# Machine Learning with MapReduce 
 
 Solving some machine learning problems with map-reduce
 
