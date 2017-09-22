@@ -1,0 +1,5 @@
+ipyparallel==6.0.2
+scikit-learn==0.19.0
+pandas==0.20.3
+sklearn-pandas==1.5.0
+numpy==1.13.1
