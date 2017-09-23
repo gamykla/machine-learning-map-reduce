@@ -22,3 +22,6 @@ ipcluster start -n 8
 NB: ipyparallel can run locally, or remotely.. You can build up a cluster to meet your needs, see http://ipyparallel.readthedocs.io/en/latest/ for more detail.
 
 Once the cluster has started you can run the python examples.
+
+## Refernces
+* ML datasources: http://archive.ics.uci.edu/ml/datasets.html?area=&att=&format=&numAtt=&numIns=&sort=attup&task=reg&type=&view=table
