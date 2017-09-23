@@ -60,7 +60,7 @@ def distributed_sum():
     return sum_j
 
 
-def gradient_descent(theta, alpha, total_iterations, training_set_size):
+def map_reduce_gradient_descent(theta, alpha, total_iterations, training_set_size):
     """
     Gradient descent - this is the algorithm that finds optimal parameters for our linear regression model.
     """
@@ -72,10 +72,9 @@ def gradient_descent(theta, alpha, total_iterations, training_set_size):
 
         for j in range(0, len_theta):
             dview.push({"theta": theta, "j": j})
-            ar = dview.apply_async(distributed_sum)
-            dview.wait(ar)
-            total_sum = reduce((lambda x, y: x + y), ar.get())
-            print total_sum
+            async_result = dview.apply_async(distributed_sum)
+            dview.wait(async_result)
+            total_sum = reduce((lambda x, y: x + y), async_result.get())
             derivative_j = (1.0 / float(training_set_size)) * total_sum
             temp_theta[j] = theta[j] - alpha*derivative_j
 
@@ -114,7 +113,7 @@ def main():
     alpha = 0.01
     iterations = 500
 
-    theta = gradient_descent(theta, alpha, iterations, len(y_train))
+    theta = map_reduce_gradient_descent(theta, alpha, iterations, len(y_train))
     print "trained theta: {}".format(theta)
 
 
