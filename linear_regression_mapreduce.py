@@ -11,6 +11,11 @@ with dview.sync_imports():
     from sklearn.model_selection import train_test_split
 
 
+def h(theta, x):
+    """ Linear regression hypothesis function"""
+    return numpy.asscalar(theta.dot(x))
+
+
 def get_labels(data_frame):
     return numpy.asarray(data_frame['y'])
 
@@ -47,22 +52,19 @@ def distributed_sum():
     must be pushed: j, theta
     scattered: X, y
     """
-
-    def h(x):
-        return numpy.asscalar(theta.dot(x))
-
     i = 0
     sum_j = 0
     for _, x_i in X.iterrows():
-        sum_j += (h(x_i) - y[i]) * x_i[j]
+        sum_j += (h(theta, x_i) - y[i]) * x_i[j]
         i += 1
 
     return sum_j
 
 
-def map_reduce_gradient_descent(theta, alpha, total_iterations, training_set_size):
+def gradient_descent(theta, alpha, total_iterations, training_set_size, hypothesis_function):
     """
     Gradient descent - this is the algorithm that finds optimal parameters for our linear regression model.
+    Compute with map-reduce pattern.
     """
     len_theta = len(theta)
 
@@ -71,15 +73,13 @@ def map_reduce_gradient_descent(theta, alpha, total_iterations, training_set_siz
         temp_theta = numpy.zeros(len_theta)
 
         for j in range(0, len_theta):
-            dview.push({"theta": theta, "j": j})
+            dview.push({"theta": theta, "j": j, "h": hypothesis_function})
             async_result = dview.apply_async(distributed_sum)
             dview.wait(async_result)
             total_sum = reduce((lambda x, y: x + y), async_result.get())
             derivative_j = (1.0 / float(training_set_size)) * total_sum
             temp_theta[j] = theta[j] - alpha*derivative_j
-
         theta = temp_theta
-
     return theta
 
 
@@ -113,7 +113,8 @@ def main():
     alpha = 0.01
     iterations = 500
 
-    theta = map_reduce_gradient_descent(theta, alpha, iterations, len(y_train))
+    # NB: for 500 iterastions, alpha=0.01 theta should be computed to be [-2.61862792  1.07368604]  with cost 4.62852531029
+    theta = gradient_descent(theta, alpha, iterations, len(y_train), h)
     print "trained theta: {}".format(theta)
 
 

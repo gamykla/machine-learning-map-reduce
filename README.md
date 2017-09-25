@@ -1,4 +1,4 @@
-# Machine Learning with MapReduce 
+# Machine Learning with MapReduce
 
 Solving some machine learning problems with map-reduce
 
@@ -8,6 +8,11 @@ Many popular machine learning algorithms can be solved with map reduce as discus
 Furthermore, it is demonstrated that these common algorithms can scale linearly to the number of processors involved in the computation.
 
 To take advantage of parallelism, algorithms need to be re-formed so that they can be expressed as map reduce operations. This project will demonstrate some of those techniques, starting with simpler problems such as logistic regression with gradient descent expressed as a map reduce computation
+
+### included learning algorithms
+* linear regression
+* logistic regression
+
 
 ## Running the examples
 First install the requirements
@@ -25,3 +30,4 @@ Once the cluster has started you can run the python examples.
 
 ## Refernces
 * ML datasources: http://archive.ics.uci.edu/ml/datasets.html?area=&att=&format=&numAtt=&numIns=&sort=attup&task=reg&type=&view=table
+* http://mran.revolutionanalytics.com/documents/data/
