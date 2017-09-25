@@ -47,8 +47,7 @@ def compute_cost_function(theta, X, y):
 def distributed_sum():
     """
     one part of a sum that is distributred across the cluster.
-    Compute: sum( (H(x_i) - y_i)*x_ij )
-    the result will then be reduced and multiplied by 1/m to form a derivative term.
+    The result will then be reduced and multiplied by 1/m to form a derivative term.
     must be pushed: j, theta
     scattered: X, y
     """
@@ -63,8 +62,7 @@ def distributed_sum():
 
 def gradient_descent(theta, alpha, total_iterations, training_set_size, hypothesis_function):
     """
-    Gradient descent - this is the algorithm that finds optimal parameters for our linear regression model.
-    Compute with map-reduce pattern.
+    Gradient descent - this is the algorithm that finds optimal parameters. Compute with map-reduce pattern.
     """
     len_theta = len(theta)
 
@@ -98,7 +96,7 @@ def main():
 
     print "Features: {}".format(feature_vector_size-1)
     print "X Size: {}".format(len(X))
-    print "X train size: {}".format(m)
+    print "X train size: {}".format(len(X_train))
     print "y train size: {}".format(len(y_train))
     print "X test size: {}".format(len(X_test))
     print "y test size: {}".format(len(y_test))
