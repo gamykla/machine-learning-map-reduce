@@ -56,7 +56,6 @@ def distributed_sum():
     for _, x_i in X.iterrows():
         sum_j += (h(theta, x_i) - y[i]) * x_i[j]
         i += 1
-
     return sum_j
 
 
@@ -64,8 +63,8 @@ def gradient_descent(theta, alpha, total_iterations, training_set_size, hypothes
     """
     Gradient descent - this is the algorithm that finds optimal parameters. Compute with map-reduce pattern.
     """
-    len_theta = len(theta)
 
+    len_theta = len(theta)
     # repeat for total_iterations
     for _ in range(0, total_iterations):
         temp_theta = numpy.zeros(len_theta)

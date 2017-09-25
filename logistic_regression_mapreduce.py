@@ -135,6 +135,7 @@ def main():
     optimized_theta = gradient_descent(initial_theta, alpha, iterations, len(y_train), h)
 
     # nb near perfect cost would be 0.203
+    # for alpha = 0.1 and 500 iterations theta should be [-1.49128326  2.21833174  1.76958357]
     print "Optimized Theta: {}".format(optimized_theta)
     print "Cost with optimized theta: {}".format(cost(optimized_theta, X, y))
 
