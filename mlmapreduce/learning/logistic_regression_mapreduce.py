@@ -1,5 +1,9 @@
 import ipyparallel as ipp
 
+from sklearn.model_selection import train_test_split
+
+from mlmapreduce.kernel import mapreduce
+
 client = ipp.Client()
 dview = client[:]
 
@@ -8,7 +12,6 @@ with dview.sync_imports():
     import numpy
     from scipy.stats import logistic
     import math
-    from sklearn.model_selection import train_test_split
 
 
 def h(theta, x):
@@ -133,7 +136,7 @@ def main():
     async_result = dview.scatter('y', y_train)
     dview.wait(async_result)
 
-    optimized_theta = gradient_descent(initial_theta, alpha, iterations, len(y_train), h)
+    optimized_theta = mapreduce.gradient_descent(dview, initial_theta, alpha, iterations, len(y_train), h)
 
     # nb near perfect cost would be 0.203
     # for alpha = 0.1 and 500 iterations theta should be [-1.49128326  2.21833174  1.76958357]

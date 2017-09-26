@@ -28,7 +28,7 @@ def get_features(data_frame):
 
 def load_data_frame():
     data_frame = pandas.read_csv('data/linear-regression.txt', delimiter=",")
-    # add intercept mapreduce=1
+    # add intercept x0=1
     data_frame.insert(0, 'i', 1)
     return data_frame
 
