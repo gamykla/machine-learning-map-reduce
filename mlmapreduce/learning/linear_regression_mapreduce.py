@@ -2,6 +2,7 @@ import ipyparallel as ipp
 from sklearn.model_selection import train_test_split
 
 from mlmapreduce.kernel import mapreduce
+from mlmapreduce.utilities import utils, hypothesis
 
 client = ipp.Client()
 dview = client[:]
@@ -9,28 +10,7 @@ dview = client[:]
 with dview.sync_imports():
     # make sure workers have access to imports
     # http://ipyparallel.readthedocs.io/en/5.0.0/multiengine.html#remote-imports
-    import pandas
     import numpy
-    import math
-
-
-def h(theta, X):
-    return X.dot(theta.transpose())
-
-
-def get_labels(data_frame):
-    return numpy.asarray(data_frame['y'])
-
-
-def get_features(data_frame):
-    return data_frame.drop('y', axis=1)
-
-
-def load_data_frame():
-    data_frame = pandas.read_csv('data/linear-regression.txt', delimiter=",")
-    # add intercept x0=1
-    data_frame.insert(0, 'i', 1)
-    return data_frame
 
 """
 TODO: vectorize
@@ -50,9 +30,12 @@ TEST_SET_SIZE = 0.3
 
 
 def main():
-    data_frame = load_data_frame()
-    y = get_labels(data_frame)
-    X = get_features(data_frame)
+    data_frame = utils.load_data_frame('data/linear-regression.txt')
+    # add intercept x0=1
+    data_frame.insert(0, 'x0', 1)
+
+    y = utils.get_labels(data_frame)
+    X = utils.get_features(data_frame)
     m, feature_vector_size = X.shape # feature vector size includes intercept term (1)
 
     # partition data set into train and test
@@ -80,12 +63,12 @@ def main():
     import time
     start = time.time()
     # NB: for 500 iterastions, alpha=0.01 theta should be computed to be [-2.61862792  1.07368604]  with cost 4.62852531029
-    theta = mapreduce.gradient_descent(dview, initial_theta, alpha, iterations, len(y_train), h)
+    theta = mapreduce.gradient_descent(dview, initial_theta, alpha, iterations, len(y_train), hypothesis.h_linear_regression)
     print "trained theta: {}".format(theta)
     end = time.time()
+
     print "Time: {}".format(end-start)
 
 
 if __name__ == "__main__":
     main()
-
