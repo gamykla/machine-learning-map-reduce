@@ -67,9 +67,9 @@ def main():
     print "y test size: {}".format(len(y_test))
 
     # Distribute training set across the cluster
-    async_result = dview.scatter('X', X_train)
+    async_result = dview.scatter('X', numpy.matrix(X_train.as_matrix()))
     dview.wait(async_result)
-    async_result = dview.scatter('y', y_train)
+    async_result = dview.scatter('y', numpy.matrix(y_train).transpose())
     dview.wait(async_result)
 
     initial_theta = numpy.zeros(feature_vector_size)
