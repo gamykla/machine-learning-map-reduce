@@ -17,6 +17,12 @@ print x.dot(y)
 
 print y[:,0]
 
+
 t = numpy.matrix([1, 1, 1]).transpose()
 x = numpy.matrix([2, 2, 2]).transpose()
 print numpy.multiply(t, x)
+
+
+from scipy.stats import logistic
+
+print logistic.cdf(numpy.multiply(t, x))

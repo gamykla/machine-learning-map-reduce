@@ -14,10 +14,10 @@ with dview.sync_imports():
     import math
 
 
-def h(theta, x):
+def h(theta, X):
     """ logistic regression hypothesis function"""
     # sigmoid function (1 / (1 + e^-(theta' * x)))
-    return numpy.asscalar(logistic.cdf(theta.dot(x)))
+    return logistic.cdf(X.dot(theta.transpose()))
 
 
 def load_data_frame():
@@ -131,9 +131,9 @@ def main():
     iterations = 500
 
     # distribute training data across the cluster
-    async_result = dview.scatter('X', X_train)
+    async_result = dview.scatter('X', numpy.matrix(X_train.as_matrix()))
     dview.wait(async_result)
-    async_result = dview.scatter('y', y_train)
+    async_result = dview.scatter('y', numpy.matrix(y_train).transpose())
     dview.wait(async_result)
 
     optimized_theta = mapreduce.gradient_descent(dview, initial_theta, alpha, iterations, len(y_train), h)
