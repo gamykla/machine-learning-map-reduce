@@ -32,10 +32,9 @@ def load_data_frame():
     data_frame.insert(0, 'i', 1)
     return data_frame
 
-
+"""
+TODO: vectorize
 def compute_cost_function(theta, X, y):
-    """ for given model parameters 'theta' compute the model
-    cost for features 'X' and labels 'y' """
     m = len(y)
     total_sum = 0
 
@@ -44,7 +43,7 @@ def compute_cost_function(theta, X, y):
         total_sum += math.pow((h(theta, x) - y[i]), 2)
 
     return (1.0/(2*m)) * total_sum
-
+"""
 
 RANDOM_SEED = 42
 TEST_SET_SIZE = 0.3

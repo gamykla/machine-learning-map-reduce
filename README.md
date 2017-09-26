@@ -24,6 +24,12 @@ Next you'll want to start your 'cluster'. I have 8 cores so i'll setup 8 workers
 ```
 ipcluster start -n 8
 ```
+in another terminal, run example code:
+```
+cd mlmapreduce/learning
+python linear_regression_mapreduce.py
+python logistic_regression_mapreduce.py
+```
 
 NB: ipyparallel can run locally, or remotely.. You can build up a cluster to meet your needs, see http://ipyparallel.readthedocs.io/en/latest/ for more detail.
 
