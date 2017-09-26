@@ -1,7 +1,7 @@
 import ipyparallel as ipp
 from sklearn.model_selection import train_test_split
 
-from mlmapreduce import mapreduce
+from mlmapreduce.kernel import mapreduce
 
 client = ipp.Client()
 dview = client[:]
