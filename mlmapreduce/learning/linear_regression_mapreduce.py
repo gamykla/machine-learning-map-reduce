@@ -7,15 +7,15 @@ client = ipp.Client()
 dview = client[:]
 
 with dview.sync_imports():
-    # make sure workers have access to imports http://ipyparallel.readthedocs.io/en/5.0.0/multiengine.html#remote-imports
+    # make sure workers have access to imports
+    # http://ipyparallel.readthedocs.io/en/5.0.0/multiengine.html#remote-imports
     import pandas
     import numpy
     import math
 
 
-def h(theta, x):
-    """ Linear regression hypothesis function"""
-    return numpy.asscalar(theta.dot(x))
+def h(theta, X):
+    return X.dot(theta.transpose())
 
 
 def get_labels(data_frame):
@@ -78,9 +78,13 @@ def main():
     alpha = 0.01
     iterations = 500
 
+    import time
+    start = time.time()
     # NB: for 500 iterastions, alpha=0.01 theta should be computed to be [-2.61862792  1.07368604]  with cost 4.62852531029
     theta = mapreduce.gradient_descent(dview, initial_theta, alpha, iterations, len(y_train), h)
     print "trained theta: {}".format(theta)
+    end = time.time()
+    print "Time: {}".format(end-start)
 
 
 if __name__ == "__main__":

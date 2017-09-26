@@ -10,12 +10,11 @@ def distributed_sum(theta, j, h):
 
     Expects X, y, to be set through view.scatter()
     """
-    i = 0
-    sum_j = 0
-    for _, x_i in X.iterrows():
-        sum_j += (h(theta, x_i) - y[i]) * x_i[j]
-        i += 1
-    return sum_j
+    y_matrix = numpy.matrix(y).transpose()
+    X_matrix = numpy.matrix(X.as_matrix())
+    theta = numpy.matrix(theta)
+
+    return (numpy.multiply(h(theta, X_matrix) - y_matrix, X_matrix[:,j])).sum()
 
 
 def gradient_descent(dview, theta, alpha, total_iterations, training_set_size, hypothesis_function):
@@ -25,7 +24,7 @@ def gradient_descent(dview, theta, alpha, total_iterations, training_set_size, h
     """
 
     len_theta = len(theta)
-    # repeat for total_iterations
+
     for _ in range(0, total_iterations):
         temp_theta = numpy.zeros(len_theta)
 
@@ -33,7 +32,7 @@ def gradient_descent(dview, theta, alpha, total_iterations, training_set_size, h
             async_result = dview.apply_async(distributed_sum, theta, j, hypothesis_function)
             dview.wait(async_result)
             total_sum = reduce((lambda x, y: x + y), async_result.get())
-            derivative_j = (1.0 / float(training_set_size)) * total_sum
+            derivative_j = (1.0 / training_set_size) * total_sum
             temp_theta[j] = theta[j] - alpha*derivative_j
         theta = temp_theta
     return theta
