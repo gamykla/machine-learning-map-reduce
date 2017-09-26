@@ -47,7 +47,7 @@ def cost(theta, X, y):
     return (1.0/m) * total_sum
 
 
-def distributed_sum():
+def distributed_sum(theta, j, h):
     """
     one part of a sum that is distributred across the cluster.
     The result will then be reduced and multiplied by 1/m to form a derivative term.
@@ -74,8 +74,7 @@ def gradient_descent(theta, alpha, total_iterations, training_set_size, hypothes
         temp_theta = numpy.zeros(len_theta)
 
         for j in range(0, len_theta):
-            dview.push({"theta": theta, "j": j, "h": hypothesis_function})
-            async_result = dview.apply_async(distributed_sum)
+            async_result = dview.apply_async(distributed_sum, theta, j, hypothesis_function)
             dview.wait(async_result)
             total_sum = reduce((lambda x, y: x + y), async_result.get())
             derivative_j = (1.0 / float(training_set_size)) * total_sum
@@ -129,8 +128,10 @@ def main():
     iterations = 500
 
     # distribute training data across the cluster
-    dview.scatter('X', X_train)
-    dview.scatter('y', y_train)
+    async_result = dview.scatter('X', X_train)
+    dview.wait(async_result)
+    async_result = dview.scatter('y', y_train)
+    dview.wait(async_result)
 
     optimized_theta = gradient_descent(initial_theta, alpha, iterations, len(y_train), h)
 
