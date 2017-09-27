@@ -34,6 +34,11 @@ python logistic_regression_mapreduce.py
 
 NB: ipyparallel can run locally, or remotely.. You can build up a cluster to meet your needs, see http://ipyparallel.readthedocs.io/en/latest/ for more detail.
 
+## Running the tests
+Tests are implemented with Nose
+```
+nosetests .
+```
 
 
 ## Refernces
