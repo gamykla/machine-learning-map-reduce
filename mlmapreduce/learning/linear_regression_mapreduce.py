@@ -30,7 +30,7 @@ TEST_SET_SIZE = 0.3
 
 
 def main():
-    data_frame = utils.load_data_frame('data/linear-regression.txt')
+    data_frame = utils.load_data_frame('../../data/linear-regression.txt')
     # add intercept x0=1
     data_frame.insert(0, 'x0', 1)
 

@@ -34,7 +34,7 @@ def main():
     """
     Use mapReduce to train a logistic regression model.
     """
-    data_frame = utils.mean_normalization(utils.load_data_frame('data/logistic-regression.txt'))
+    data_frame = utils.mean_normalization(utils.load_data_frame('../../data/logistic-regression.txt'))
     # add intercept x=1
     data_frame.insert(0, 'x0', 1)
 
