@@ -1,3 +1,5 @@
+import time
+
 import ipyparallel as ipp
 
 from sklearn.model_selection import train_test_split
@@ -62,9 +64,12 @@ def main():
     async_result = dview.scatter('y', numpy.matrix(y_train).transpose())
     dview.wait(async_result)
 
-    optimized_theta = mapreduce.gradient_descent(
+    start = time.time()
+    optimized_theta = mapreduce.gradient_descent2(
         dview, initial_theta, alpha, iterations, len(y_train), hypothesis.h_logistic_regression)
 
+    end = time.time()
+    print "Total: {}".format(end-start)
     # nb near perfect cost would be 0.203
     # for alpha = 0.1 and 500 iterations theta should be [-1.49128326  2.21833174  1.76958357]
     print "Optimized Theta: {}".format(optimized_theta)
