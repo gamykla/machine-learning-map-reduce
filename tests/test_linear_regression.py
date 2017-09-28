@@ -1,10 +1,12 @@
-import ipyparallel as ipp
 import os
+import time
+
+import ipyparallel as ipp
 from sklearn.model_selection import train_test_split
 
 from nose.tools import eq_
-from mlmapreduce.kernel import mapreduce
-from mlmapreduce.utilities import utils, hypothesis, gradient_descent_serial
+from mlmapreduce.kernel import gradient_descent_mapreduce, gradient_descent_serial
+from mlmapreduce.utilities import utils, hypothesis
 
 client = ipp.Client()
 dview = client[:]
@@ -37,13 +39,24 @@ def test_linear_regression_results_match():
     async_result = dview.scatter('y', y_train_matrix)
     dview.wait(async_result)
 
-    initial_theta = numpy.zeros(feature_vector_size)
-
     alpha = 0.01
     iterations = 25
 
-    theta = mapreduce.gradient_descent(dview, initial_theta, alpha, iterations, len(y_train), hypothesis.h_linear_regression)
+    start = time.time()
+    theta = gradient_descent_mapreduce.gradient_descent(dview, numpy.zeros(feature_vector_size), alpha, iterations, len(y_train), hypothesis.h_linear_regression)
+    end = time.time()
+    time_parallel = end-start
+    print "time parallel: {}".format(time_parallel)
+
+    start = time.time()
     theta2 = gradient_descent_serial.gradient_descent(X_train_matrix, y_train_matrix, numpy.zeros(feature_vector_size), alpha, iterations, hypothesis.h_linear_regression)
-    eq_(theta[0], -0.11521271754557487)
-    eq_(theta[1], 0.82279250122643288)
+    end = time.time()
+    time_serial = end-start
+    print "time serial: {}".format(time_serial)
+
+    # parallel 250 times slower
+    print "parallel / serial factor = {}".format(time_parallel / time_serial)
+
+    eq_(theta.tolist()[0][0], -0.11521271754557487)
+    eq_(theta.tolist()[0][1], 0.82279250122643288)
     eq_(theta.all(), theta2.all())

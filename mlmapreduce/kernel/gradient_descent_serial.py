@@ -10,7 +10,7 @@ def gradient_descent(X, y, theta, alpha, total_iterations, hypothesis):
     for _ in range(0, total_iterations):
         temp_theta = numpy.zeros(len_theta)
 
-        X_by_theta_minus_y = (hypothesis(numpy.matrix(theta), X) - y)
+        X_by_theta_minus_y = numpy.subtract(hypothesis(numpy.matrix(theta), X), y)
 
         for j in range(0, len_theta):
             jth_column_of_X = X[:,j]
@@ -19,4 +19,4 @@ def gradient_descent(X, y, theta, alpha, total_iterations, hypothesis):
 
         theta = temp_theta
 
-    return theta
+    return numpy.matrix(theta)

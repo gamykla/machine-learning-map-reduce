@@ -4,7 +4,7 @@ import ipyparallel as ipp
 
 from sklearn.model_selection import train_test_split
 
-from mlmapreduce.kernel import mapreduce
+from mlmapreduce.kernel import gradient_descent_mapreduce
 from mlmapreduce.utilities import utils, hypothesis
 
 client = ipp.Client()
@@ -65,7 +65,7 @@ def main():
     dview.wait(async_result)
 
     start = time.time()
-    optimized_theta = mapreduce.gradient_descent2(
+    optimized_theta = gradient_descent_mapreduce.gradient_descent(
         dview, initial_theta, alpha, iterations, len(y_train), hypothesis.h_logistic_regression)
 
     end = time.time()

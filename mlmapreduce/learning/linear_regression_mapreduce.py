@@ -1,7 +1,7 @@
 import ipyparallel as ipp
 from sklearn.model_selection import train_test_split
 
-from mlmapreduce.kernel import mapreduce
+from mlmapreduce.kernel import gradient_descent_mapreduce
 from mlmapreduce.utilities import utils, hypothesis
 
 client = ipp.Client()
@@ -63,7 +63,7 @@ def main():
     import time
     start = time.time()
     # NB: for 500 iterastions, alpha=0.01 theta should be computed to be [-2.61862792  1.07368604]  with cost 4.62852531029
-    theta = mapreduce.gradient_descent(dview, initial_theta, alpha, iterations, len(y_train), hypothesis.h_linear_regression)
+    theta = gradient_descent_mapreduce.gradient_descent(dview, initial_theta, alpha, iterations, len(y_train), hypothesis.h_linear_regression)
     print "trained theta: {}".format(theta)
     end = time.time()
 

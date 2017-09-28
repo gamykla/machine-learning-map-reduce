@@ -1,10 +1,13 @@
 import os
+import time
+
 import ipyparallel as ipp
 from sklearn.model_selection import train_test_split
 from nose.tools import eq_
 
-from mlmapreduce.kernel import mapreduce
-from mlmapreduce.utilities import utils, hypothesis, gradient_descent_serial
+from mlmapreduce.kernel import gradient_descent_mapreduce, gradient_descent_serial
+from mlmapreduce.utilities import utils, hypothesis
+
 
 client = ipp.Client()
 dview = client[:]
@@ -29,8 +32,6 @@ def def_test_logistic_regression():
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SET_SIZE, random_state=RANDOM_SEED)
 
-    initial_theta = numpy.zeros(feature_vector_size)
-
     alpha = 0.1
     iterations = 25
 
@@ -42,13 +43,24 @@ def def_test_logistic_regression():
     async_result = dview.scatter('y', y_train_matrix)
     dview.wait(async_result)
 
-    theta = mapreduce.gradient_descent(
-        dview, initial_theta, alpha, iterations, len(y_train), hypothesis.h_logistic_regression)
+    start = time.time()
+    theta = gradient_descent_mapreduce.gradient_descent(
+        dview, numpy.zeros(feature_vector_size), alpha, iterations, len(y_train), hypothesis.h_logistic_regression)
+    end = time.time()
+    print "time parallel: {}".format(end-start)
+    time_parallel = end-start
 
-    theta2 = gradient_descent_serial.gradient_descent(X_train_matrix, y_train_matrix, theta, alpha, iterations, hypothesis.h_logistic_regression)
+    start = time.time()
+    theta2 = gradient_descent_serial.gradient_descent(X_train_matrix, y_train_matrix, numpy.zeros(feature_vector_size), alpha, iterations, hypothesis.h_logistic_regression)
+    end = time.time()
+    time_serial = end-start
+    print "time serial: {}".format(end-start)
 
-    eq_(theta[0], 0.11953961910411977)
-    eq_(theta[1], 0.25853238042750853)
-    eq_(theta[2], 0.22779121094153235)
+    # parallel ~ 60 times slower
+    print "parallel / serial factor = {}".format(time_parallel / time_serial)
+
+    eq_(theta.tolist()[0][0], 0.11953961910411977)
+    eq_(theta.tolist()[0][1], 0.25853238042750853)
+    eq_(theta.tolist()[0][2], 0.22779121094153235)
 
     eq_(theta.all(), theta2.all())

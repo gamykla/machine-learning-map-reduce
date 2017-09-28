@@ -12,7 +12,7 @@ def distributed_sum(theta):
         - X, y: to be set through view.scatter()
         - h: hypothesis function is set
     """
-    h_of_x_minus_y = h(numpy.matrix(theta), X) - y
+    h_of_x_minus_y = numpy.subtract(h(numpy.matrix(theta), X) , y)
 
     result = []
     for j in range(0, len(theta)):
@@ -22,6 +22,19 @@ def distributed_sum(theta):
 
 
 def gradient_descent(dview, theta, alpha, total_iterations, training_set_size, hypothesis_function):
+    """
+    Gradient descent by mapreduce.
+    dview - ipyparallel DirectView http://ipyparallel.readthedocs.io/en/5.0.0/multiengine.html#creating-a-directview-instance
+    theta - initial settings for theta, a numpy array https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.array.html
+    alpha - gradient descent parameter, how fast should we adjust thetas
+    total_iterations - number of gradient descent iterations to perform
+    training_set_size - total number of examples in the training set
+    hypothesis_function - function from utilities.hypothesis.
+
+    Note: before running this function, X and y must be set.
+    X, y are numpy matrices see https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.matrix.html.
+    They must be set with ipyparallel scatter (http://ipyparallel.readthedocs.io/en/latest/details.html#scatter-and-gather)
+    """
     dview.push({"h": hypothesis_function})
 
     len_theta = len(theta)
@@ -41,4 +54,4 @@ def gradient_descent(dview, theta, alpha, total_iterations, training_set_size, h
             temp_theta[j] = theta[j] - alpha*derivative_j
 
         theta = temp_theta
-    return theta
+    return numpy.matrix(theta)

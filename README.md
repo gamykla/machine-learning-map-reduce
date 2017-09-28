@@ -18,7 +18,7 @@ To take advantage of parallelism, algorithms need to be re-formed so that they c
 First install the requirements
 ```
 pip install -r requirements.txt
-pip install .
+pip install . # or pip uninstall mlmapreduce && pip install .
 ```
 Next you'll want to start your 'cluster'. I have 8 cores so i'll setup 8 workers:
 ```
