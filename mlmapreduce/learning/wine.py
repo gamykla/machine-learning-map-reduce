@@ -29,7 +29,7 @@ def main():
     print "y test size: {}".format(len(y_test))
 
     alpha = 0.01
-    iterations = 2500
+    iterations = 1000
 
     X_train_matrix = numpy.matrix(X_train.as_matrix())
     y_train_matrix = numpy.matrix(y_train).transpose()
@@ -38,18 +38,36 @@ def main():
     theta = gradient_descent_serial.gradient_descent(X_train_matrix, y_train_matrix, numpy.zeros(feature_vector_size), alpha, iterations, hypothesis.h_linear_regression)
     end = time.time()
     time_serial = end-start
+
     print "Theta: {}".format(theta)
-    print "Cost: {}".format(cost.linear_regression_cost(theta, X_train_matrix, y_train_matrix))
     print "time serial: {}".format(time_serial)
+
+    print "Cost: {}".format(cost.linear_regression_cost(theta, X_train_matrix, y_train_matrix))
 
     X_test_matrix = numpy.matrix(X_test.as_matrix())
     y_test_matrix = numpy.matrix(y_test).transpose()
+    print "Cost: {}".format(cost.linear_regression_cost(theta, X_test_matrix, y_test_matrix))
 
-    #theta = numpy.matrix(theta)
-    #predictions = hypothesis.h_linear_regression(theta, X_test_matrix)
-    #print theta.shape
-    #print X_test_matrix.shape
-    #print predictions.shape
+    if True:
+        predictions = hypothesis.h_linear_regression(theta, X_test_matrix)
+        predictions_list = predictions.tolist()
+        y_test_list = y_test_matrix.tolist()
+
+        percent_diff_total = 0
+        for i in range(0, len(predictions_list)):
+            prediction_i = predictions_list[i][0]
+            actual_i = y_test_list[i][0]
+
+            if actual_i:
+                percent_diff = abs(100.0 * ((prediction_i - actual_i) / actual_i))
+            else:
+                percent_diff = abs(100.0 * ((prediction_i - actual_i) / 1))
+
+            percent_diff_total += percent_diff
+            print "pred: {} actual: {}, difference: {}".format(prediction_i, actual_i, percent_diff)
+
+        print "Average % diff: {}".format(percent_diff_total / len(y_test_list))
+
 
 if __name__ == "__main__":
     main()
