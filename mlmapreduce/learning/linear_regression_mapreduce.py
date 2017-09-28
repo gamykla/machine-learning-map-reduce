@@ -12,18 +12,6 @@ with dview.sync_imports():
     # http://ipyparallel.readthedocs.io/en/5.0.0/multiengine.html#remote-imports
     import numpy
 
-"""
-TODO: vectorize
-def compute_cost_function(theta, X, y):
-    m = len(y)
-    total_sum = 0
-
-    for i, x in X.iterrows():
-        x = x.as_matrix()
-        total_sum += math.pow((h(theta, x) - y[i]), 2)
-
-    return (1.0/(2*m)) * total_sum
-"""
 
 RANDOM_SEED = 42
 TEST_SET_SIZE = 0.3

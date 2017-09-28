@@ -14,20 +14,6 @@ with dview.sync_imports():
     import numpy
 
 
-"""
-TODO: vectorize
-def cost(theta, X, y):
-    m = len(y)
-    total_sum = 0
-
-    for i, x in X.iterrows():
-        x = x.as_matrix()
-        estimate = h(theta, x)
-        total_sum += (-1 * y[i]) * math.log(estimate) - (1.0 - y[i]) * math.log(1.0 - estimate)
-
-    return (1.0/m) * total_sum
-"""
-
 RANDOM_SEED = 42
 TEST_SET_SIZE = 0.2
 
