@@ -6,6 +6,8 @@ import ipyparallel as ipp
 from sklearn.model_selection import train_test_split
 import time
 
+from numpy.linalg import inv
+
 from mlmapreduce.utilities import utils, hypothesis, cost
 from mlmapreduce.kernel import gradient_descent_mapreduce, gradient_descent_serial
 
@@ -43,9 +45,12 @@ def main():
     X_train_matrix = numpy.matrix(X_train.as_matrix())
     y_train_matrix = numpy.matrix(y_train).transpose()
 
+    #
     # Serial processing
+    #
     start = time.time()
-    theta = gradient_descent_serial.gradient_descent(X_train_matrix, y_train_matrix, numpy.zeros(feature_vector_size), alpha, iterations, hypothesis.h_linear_regression)
+    theta = gradient_descent_serial.gradient_descent(
+        X_train_matrix, y_train_matrix, numpy.zeros(feature_vector_size), alpha, iterations, hypothesis.h_linear_regression)
     end = time.time()
     time_serial = end-start
     print "Theta: {}".format(theta)
@@ -53,26 +58,44 @@ def main():
 
     print "Cost: {}".format(cost.linear_regression_cost(theta, X_train_matrix, y_train_matrix))
 
-    # map reduce
-    async_result = dview.scatter('X', X_train_matrix)
-    dview.wait(async_result)
-    async_result = dview.scatter('y', y_train_matrix)
-    dview.wait(async_result)
 
-    start = time.time()
-    theta = gradient_descent_mapreduce.gradient_descent(dview, numpy.zeros(feature_vector_size), alpha, iterations, len(y_train), hypothesis.h_linear_regression)
+    #
+    # Normal equation - optimal analytical solution. theta = (X^t * X)^-1 * X^t * y
+    #
+    print " "
+    theta = (inv(X_train_matrix.transpose().dot(X_train_matrix)).dot(X_train_matrix.transpose())).dot(y_train_matrix)
+    theta = theta.transpose()
     print "Theta: {}".format(theta)
-    end = time.time()
-    time_parallel = end-start
-    print "time parallel: {}".format(time_parallel)
+    print "Cost: {}".format(cost.linear_regression_cost(theta, X_train_matrix, y_train_matrix))
 
 
-    # Analyze results on test set
-    X_test_matrix = numpy.matrix(X_test.as_matrix())
-    y_test_matrix = numpy.matrix(y_test).transpose()
-    print "Cost: {}".format(cost.linear_regression_cost(theta, X_test_matrix, y_test_matrix))
-
+    #
+    # map reduce gradient descent
+    #
     if True:
+        async_result = dview.scatter('X', X_train_matrix)
+        dview.wait(async_result)
+        async_result = dview.scatter('y', y_train_matrix)
+        dview.wait(async_result)
+
+        start = time.time()
+        theta = gradient_descent_mapreduce.gradient_descent(
+            dview, numpy.zeros(feature_vector_size), alpha, iterations, len(y_train), hypothesis.h_linear_regression)
+        print "Theta: {}".format(theta)
+        end = time.time()
+        time_parallel = end-start
+        print "time parallel: {}".format(time_parallel)
+
+
+    #
+    # Analzing the results
+    #
+    if True:
+        # Analyze results on test set
+        X_test_matrix = numpy.matrix(X_test.as_matrix())
+        y_test_matrix = numpy.matrix(y_test).transpose()
+        print "Cost: {}".format(cost.linear_regression_cost(theta, X_test_matrix, y_test_matrix))
+
         print "\n"
         print "predictions vs actuals:"
         predictions = hypothesis.h_linear_regression(theta, X_test_matrix)
