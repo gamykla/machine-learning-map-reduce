@@ -10,8 +10,9 @@ Furthermore, it is demonstrated that these common algorithms can scale linearly 
 To take advantage of parallelism, algorithms need to be re-formed so that they can be expressed as map reduce operations. This project will demonstrate some of those techniques, starting with simpler problems such as logistic regression with gradient descent expressed as a map reduce computation.
 
 For smaller datasets that can easily be processed on a single core with vectorized operations expect to see MUCH better performance with a serial algoithm.
-Map reduce performance will begin to improve when dealing with extremely large datasets that cannot be effectively processed on a single core. As dataset size increases the gap in processing time
-between serial and parallel algorithms decreases, then will reach parity and from there on map reduce performance will exceed serial performance.
+
+Map reduce performance will begin to improve when dealing with extremely large datasets that cannot be effectively processed on a single core. As dataset size increases the gap in processing time between serial and parallel algorithms decreases, then will reach parity and from there on map reduce performance will exceed serial performance.
+
 
 ### included learning algorithms
 * linear regression
