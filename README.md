@@ -1,6 +1,6 @@
 # Machine Learning with MapReduce
 
-Solving some machine learning problems with map-reduce
+Solving some machine learning problems with map-reduce using https://github.com/ipython/ipyparallel as a simple, easy to use parallel computing platform. 
 
 ## What is this?
 Many popular machine learning algorithms can be solved with map reduce as discussed in this paper http://papers.nips.cc/paper/3150-map-reduce-for-machine-learning-on-multicore.pdf
