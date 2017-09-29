@@ -49,5 +49,6 @@ nosetests .
 
 
 ## Refernces
+* https://en.wikipedia.org/wiki/MapReduce
 * ML datasources: http://archive.ics.uci.edu/ml/datasets.html?area=&att=&format=&numAtt=&numIns=&sort=attup&task=reg&type=&view=table
 * http://mran.revolutionanalytics.com/documents/data/
